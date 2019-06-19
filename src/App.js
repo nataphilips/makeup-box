@@ -2,15 +2,38 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import './App.css';
 import CountUp from 'react-countup';
+import Tabletop from 'tabletop';
 
 class App extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      data: []
+    }
 
     this.picItems = '/items.png';
     this.picVolume = '/scale.png';
   }
 
+  componentDidMount() {
+    Tabletop.init({
+      key: '1JbcDajSt8oUasAbnaWkzGOzX8BhpOXB8Og5_-9Dk71k',
+      callback: googleData => {
+        this.setState({
+          data: googleData
+        })
+        console.log(googleData)
+      },
+      simpleSheet: true });
+  }
+
+  itemsCount() {
+    return this.state.data.length;
+  }
+
+  totalWeigth() {
+    return this.state.data.reduce((total, item) => total + parseInt(item.totalVolume), 0);
+  }
 
   render() {
     return (
@@ -22,7 +45,7 @@ class App extends Component {
               I have
             </Text>
             <Number>
-              <CountUp end={34} suffix=" items" duration={3}/>
+              <CountUp end={this.itemsCount()} suffix=" items" duration={2}/>
             </Number>
           </StatWrapper>
           <StatWrapper>
@@ -31,7 +54,7 @@ class App extends Component {
               And their total volume is
             </Text>
             <Number>
-              <CountUp end={392} suffix=" ml" duration={3}/>
+              <CountUp end={this.totalWeigth()} suffix=" ml" duration={2}/>
             </Number>
           </StatWrapper>
         </Container>
